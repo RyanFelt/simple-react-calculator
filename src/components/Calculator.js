@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import classNames from 'classnames';
 import { Buttons } from './Buttons';
 
 export default class Calculator extends Component {
@@ -10,12 +9,13 @@ export default class Calculator extends Component {
       firstNum: '',
       secondNum: '',
       operator: false,
-      activeOperator: false
+      activeOperator: false,
+      activeButton: ''
     };
   }
 
   math = props => {
-    const math = {
+    const mathObj = {
       '+': (x, y) => {
         return x + y;
       },
@@ -29,7 +29,8 @@ export default class Calculator extends Component {
         return x / y;
       }
     };
-    return math[props.operator](
+    console.log(props.firstNum, props.secondNum);
+    return mathObj[props.operator](
       parseFloat(props.firstNum),
       parseFloat(props.secondNum)
     );
@@ -38,18 +39,23 @@ export default class Calculator extends Component {
   onClickItem = props => {
     if (props.t === 'INPUT') {
       if (this.state.activeOperator) {
+        let newDisplay = this.state.secondNum + props.v;
+        if (newDisplay === '.') newDisplay = '0.';
         this.setState({
-          secondNum: props.v,
-          display: props.v,
-          activeOperator: false
+          secondNum: newDisplay,
+          display: newDisplay
+          // activeOperator: false
         });
       } else {
-        const newDisplay = this.state.display + props.v;
+        let newDisplay = this.state.display + props.v;
+        if (newDisplay === '.') newDisplay = '0.';
+
         this.setState({
           display: newDisplay,
-          activeOperator: false,
+          // activeOperator: false,
           firstNum: newDisplay
         });
+        console.log('END INPUT', this.state.firstNum, this.state.secondNum);
       }
     } else if (props.t === 'OPERATOR') {
       if (props.v === 'CLEAR') {
@@ -58,7 +64,8 @@ export default class Calculator extends Component {
           firstNum: '',
           secondNum: '',
           operator: false,
-          activeOperator: false
+          activeOperator: false,
+          activeButton: ''
         });
       } else if (props.v === 'INVERSE') {
         if (!this.state.display.includes('-') && this.state.display !== '')
@@ -83,7 +90,8 @@ export default class Calculator extends Component {
         this.setState({
           display: res,
           firstNum: res,
-          activeOperator: true
+          activeOperator: true,
+          activeButton: ''
         });
       }
       // +, -, /, *
@@ -91,152 +99,24 @@ export default class Calculator extends Component {
         this.setState({
           operator: props.v,
           activeOperator: true,
-          firstNum: this.state.display
+          firstNum: this.state.display,
+          secondNum: '',
+          activeButton: props.v
         });
       }
     }
   };
 
   render() {
-    let buttonClass = classNames({
-      activeOperator: this.state.activeOperator,
-      item: true
-    });
-
     return (
       <div className="App">
         <div className="container">
           <div className="calculator">
             <div className="input">{this.state.display}</div>
-            <Buttons buttonClass={buttonClass} onClickItem={this.onClickItem} />
-            {/* <div className="row">
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: 'CLEAR', t: 'OPERATOR' })}
-              >
-                C
-              </div>
-              <div
-                className="item"
-                onClick={() =>
-                  this.onClickItem({ v: 'INVERSE', t: 'OPERATOR' })
-                }
-              >
-                +/-
-              </div>
-              <div
-                className="item"
-                onClick={() =>
-                  this.onClickItem({ v: 'PERCENTAGE', t: 'OPERATOR' })
-                }
-              >
-                %
-              </div>
-              <div
-                className={buttonClass}
-                onClick={() => this.onClickItem({ v: '/', t: 'OPERATOR' })}
-              >
-                /
-              </div>
-            </div>
-            <div className="row">
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '1', t: 'INPUT' })}
-              >
-                1
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '2', t: 'INPUT' })}
-              >
-                2
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '3', t: 'INPUT' })}
-              >
-                3
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '*', t: 'OPERATOR' })}
-              >
-                *
-              </div>
-            </div>
-            <div className="row">
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '4', t: 'INPUT' })}
-              >
-                4
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '5', t: 'INPUT' })}
-              >
-                5
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '6', t: 'INPUT' })}
-              >
-                6
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '-', t: 'OPERATOR' })}
-              >
-                -
-              </div>
-            </div>
-            <div className="row">
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '7', t: 'INPUT' })}
-              >
-                7
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '8', t: 'INPUT' })}
-              >
-                8
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '9', t: 'INPUT' })}
-              >
-                9
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '+', t: 'OPERATOR' })}
-              >
-                +
-              </div>
-            </div>
-            <div className="row">
-              <div
-                className="item-0"
-                onClick={() => this.onClickItem({ v: '0', t: 'INPUT' })}
-              >
-                0
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: '.', t: 'INPUT' })}
-              >
-                .
-              </div>
-              <div
-                className="item"
-                onClick={() => this.onClickItem({ v: 'EQUAL', t: 'OPERATOR' })}
-              >
-                =
-              </div>
-            </div> */}
+            <Buttons
+              activeButton={this.state.activeButton}
+              onClickItem={this.onClickItem}
+            />
           </div>
         </div>
       </div>
