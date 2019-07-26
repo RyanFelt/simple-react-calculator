@@ -1,0 +1,29 @@
+.row {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.button,
+.button-0,
+.active-button {
+  padding: 20px;
+  width: 25px;
+  border: 1px solid #282c34;
+  border-radius: 7px;
+  box-shadow: inset 0px 0px 5px 1px rgba(0, 0, 0, 0.5);
+  background-color: white;
+  cursor: pointer;
+}
+
+.button-0 {
+  width: 95px;
+}
+
+.active-button,
+.button:hover,
+.button-0:hover {
+  background-color: #e9e986;
+  color: white;
+  font-weight: bold;
+}

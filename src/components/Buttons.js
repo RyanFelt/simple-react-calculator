@@ -1,4 +1,5 @@
 import React from 'react';
+import '../css/Buttons.css';
 
 export const Buttons = props => {
   return (

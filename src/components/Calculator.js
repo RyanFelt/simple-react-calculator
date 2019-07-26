@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Buttons } from './Buttons';
-
+import '../css/Calculator.css';
+import { math } from './helpers';
 export default class Calculator extends Component {
   constructor(props) {
     super(props);
@@ -14,28 +15,6 @@ export default class Calculator extends Component {
     };
   }
 
-  math = props => {
-    const mathObj = {
-      '+': (x, y) => {
-        return x + y;
-      },
-      '-': (x, y) => {
-        return x - y;
-      },
-      '*': (x, y) => {
-        return x * y;
-      },
-      '/': (x, y) => {
-        return x / y;
-      }
-    };
-    console.log(props.firstNum, props.secondNum);
-    return mathObj[props.operator](
-      parseFloat(props.firstNum),
-      parseFloat(props.secondNum)
-    );
-  };
-
   onClickItem = props => {
     if (props.t === 'INPUT') {
       if (this.state.activeOperator) {
@@ -44,7 +23,6 @@ export default class Calculator extends Component {
         this.setState({
           secondNum: newDisplay,
           display: newDisplay
-          // activeOperator: false
         });
       } else {
         let newDisplay = this.state.display + props.v;
@@ -52,10 +30,8 @@ export default class Calculator extends Component {
 
         this.setState({
           display: newDisplay,
-          // activeOperator: false,
           firstNum: newDisplay
         });
-        console.log('END INPUT', this.state.firstNum, this.state.secondNum);
       }
     } else if (props.t === 'OPERATOR') {
       if (props.v === 'CLEAR') {
@@ -81,7 +57,7 @@ export default class Calculator extends Component {
         this.setState({ display: percent.toString() });
       } else if (props.v === 'EQUAL') {
         if (!this.state.operator) return;
-        const res = this.math({
+        const res = math({
           operator: this.state.operator,
           firstNum: this.state.firstNum,
           secondNum: this.state.secondNum
