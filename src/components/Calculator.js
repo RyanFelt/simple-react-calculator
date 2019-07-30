@@ -18,6 +18,7 @@ export default class Calculator extends Component {
   input = value => {
     if (this.state.activeOperator) {
       if (value === '.' && this.state.secondNum.includes('.')) return;
+      if (this.state.secondNum.length > 20) return;
       let newDisplay = this.state.secondNum + value;
       if (newDisplay === '.') newDisplay = '0.';
       this.setState({
@@ -26,7 +27,10 @@ export default class Calculator extends Component {
       });
     } else {
       if (value === '.' && this.state.display.includes('.')) return;
-      let newDisplay = this.state.display + value;
+      let currentDisplay = this.state.display;
+      if (currentDisplay.length > 20) return;
+      if (currentDisplay === 'Error') currentDisplay = '';
+      let newDisplay = currentDisplay + value;
       if (newDisplay === '.') newDisplay = '0.';
 
       this.setState({
@@ -64,17 +68,30 @@ export default class Calculator extends Component {
         operator: this.state.operator,
         firstNum: this.state.firstNum,
         secondNum: this.state.secondNum
-      }).toString();
+      });
+
+      if (res === 'Infinity') {
+        return this.setState({
+          display: 'Error',
+          firstNum: '',
+          secondNum: '',
+          operator: false,
+          activeOperator: false,
+          activeButton: ''
+        });
+      }
 
       this.setState({
         display: res,
         firstNum: res,
-        activeOperator: true,
+        activeOperator: false,
         activeButton: ''
       });
     }
     // +, -, /, *
     else {
+      if (this.state.firstNum === '') return;
+
       this.setState({
         operator: props.v,
         activeOperator: true,

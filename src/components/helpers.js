@@ -13,8 +13,11 @@ export const math = props => {
       return x / y;
     }
   };
-  return mathObj[props.operator](
+  let result = mathObj[props.operator](
     parseFloat(props.firstNum),
     parseFloat(props.secondNum)
   );
+
+  if (Math.round(result) !== result) result = parseFloat(result.toFixed(2)); //Need to parseFloat again to remove trailing 0's
+  return result.toString();
 };
