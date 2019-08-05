@@ -11,7 +11,8 @@ export default class Calculator extends Component {
       secondNum: '',
       operator: false,
       activeOperator: false,
-      activeButton: ''
+      activeButton: '',
+      equalLastSelected: false
     };
   }
 
@@ -29,13 +30,15 @@ export default class Calculator extends Component {
       if (value === '.' && this.state.display.includes('.')) return;
       let currentDisplay = this.state.display;
       if (currentDisplay.length > 20) return;
-      if (currentDisplay === 'Error') currentDisplay = '';
+      if (currentDisplay === 'Error' || this.state.equalLastSelected)
+        currentDisplay = '';
       let newDisplay = currentDisplay + value;
       if (newDisplay === '.') newDisplay = '0.';
 
       this.setState({
         display: newDisplay,
-        firstNum: newDisplay
+        firstNum: newDisplay,
+        equalLastSelected: false
       });
     }
   };
@@ -77,7 +80,8 @@ export default class Calculator extends Component {
           secondNum: '',
           operator: false,
           activeOperator: false,
-          activeButton: ''
+          activeButton: '',
+          equalLastSelected: true
         });
       }
 
@@ -85,17 +89,27 @@ export default class Calculator extends Component {
         display: res,
         firstNum: res,
         activeOperator: false,
-        activeButton: ''
+        activeButton: '',
+        equalLastSelected: true
       });
     }
     // +, -, /, *
     else {
       if (this.state.firstNum === '') return;
 
+      let firstNum = this.state.display;
+      if (this.state.activeOperator && this.state.secondNum !== '')
+        firstNum = math({
+          operator: this.state.operator,
+          firstNum: this.state.firstNum,
+          secondNum: this.state.secondNum
+        });
+
       this.setState({
         operator: props.v,
         activeOperator: true,
-        firstNum: this.state.display,
+        firstNum: firstNum,
+        display: firstNum,
         secondNum: '',
         activeButton: props.v
       });
